@@ -1,0 +1,45 @@
+{
+  "capability": "shop.refund",
+  "version": 1,
+  "kind": "action",
+  "effects": "write",
+  "summary": "shop.refund v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "refunded": {
+      "description": "Refund issued",
+      "output": {
+        "type": "object",
+        "properties": {
+          "refund_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "refund_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "idempotency": {
+    "key": [
+      "input.order_id"
+    ]
+  },
+  "lookup": {
+    "capability": "shop.refund_status",
+    "version": 1
+  }
+}

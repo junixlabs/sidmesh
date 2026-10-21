@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_LEDGER_PATH",
+      "file": "nodes/brain/contracts/classify.v1.json",
+      "pointer": "/ledger/1"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_CAPABILITY_PREFIX",
+      "file": "nodes/brain/contracts/extra.v1.json",
+      "pointer": "/capability"
+    }
+  ]
+}

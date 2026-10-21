@@ -1,0 +1,45 @@
+{
+  "capability": "shop.charge_status",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "shop.charge_status v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "charged": {
+      "description": "Charge accepted",
+      "output": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "charge_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "not_found": {
+      "description": "No earlier attempt",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

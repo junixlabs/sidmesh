@@ -1,0 +1,6 @@
+{
+  "capability": "vendor.find_cancel", "version": 1, "kind": "action", "effects": "none",
+  "summary": "Report whether an order was cancelled.",
+  "input": {"type": "object", "properties": {"po_id": {"type": "string"}}, "required": ["po_id"], "additionalProperties": false},
+  "outcomes": {"cancelled": {"description": "Order cancelled.", "output": {"type": "object", "properties": {}, "additionalProperties": false}}, "not_found": {"description": "No earlier attempt.", "output": {"type": "object", "properties": {}, "additionalProperties": false}}}
+}

@@ -1,0 +1,20 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local environment and secrets
+.env
+.env.*
+
+# Dependencies and build output
+node_modules/
+ts/dist/
+go/bin/
+
+# Generated test output
+ts/tests/.gen/
+
+# Claude Code local state and notes
+.claude/

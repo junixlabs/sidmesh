@@ -1,0 +1,18 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_LOOKUP_EFFECTS",
+      "file": "nodes/shop/contracts/poke.v1.json",
+      "pointer": "/lookup"
+    },
+    {
+      "code": "CON_WRITE_IDEMPOTENCY",
+      "file": "nodes/shop/contracts/poke_check.v1.json"
+    },
+    {
+      "code": "CON_WRITE_LOOKUP",
+      "file": "nodes/shop/contracts/poke_check.v1.json"
+    }
+  ]
+}

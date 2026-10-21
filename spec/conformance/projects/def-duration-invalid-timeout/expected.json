@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_DURATION_INVALID",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/ship_wait/timeout"
+    }
+  ]
+}

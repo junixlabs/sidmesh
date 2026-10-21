@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_AI_CONFIDENCE",
+      "file": "nodes/brain/contracts/classify.v1.json",
+      "pointer": "/outcomes/labelled/output"
+    }
+  ]
+}

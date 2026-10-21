@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_INPUT_EXTRA",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/charge/compensate/config/region"
+    }
+  ]
+}

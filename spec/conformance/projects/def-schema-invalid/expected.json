@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_SCHEMA_INVALID",
+      "file": "definitions/main.v1.json",
+      "pointer": "/signals/shipped/schema/properties/tracking/minLength"
+    }
+  ]
+}

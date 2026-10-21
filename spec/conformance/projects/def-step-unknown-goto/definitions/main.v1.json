@@ -1,0 +1,281 @@
+{
+  "id": "main",
+  "version": 1,
+  "description": "Baseline: every step type, every rule satisfied.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "params": {
+    "hold": {
+      "schema": {
+        "type": "string"
+      },
+      "default": "1h"
+    },
+    "threshold": {
+      "schema": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "default": 0.8
+    }
+  },
+  "vars": {
+    "label": {
+      "description": "Label from the AI or from a person.",
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "default": null
+    }
+  },
+  "signals": {
+    "cancel": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "goto": "abort"
+    },
+    "shipped": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "tracking": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tracking"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "search": {
+    "OrderId": "input.order_id"
+  },
+  "start": "hold",
+  "steps": {
+    "hold": {
+      "type": "wait",
+      "duration": "params.hold",
+      "on": {
+        "elapsed": "fetch"
+      }
+    },
+    "fetch": {
+      "type": "call",
+      "capability": "shop.get_order",
+      "version": 1,
+      "input": {
+        "order_id": "input.order_id"
+      },
+      "on": {
+        "found": "classify",
+        "missing": "fail",
+        "failed": "fail"
+      }
+    },
+    "classify": {
+      "type": "call",
+      "capability": "brain.classify",
+      "version": 1,
+      "input": {
+        "order_id": "input.order_id"
+      },
+      "gate": {
+        "threshold": "params.threshold",
+        "below": "review"
+      },
+      "on": {
+        "labelled": "label_ai",
+        "failed": "fail"
+      }
+    },
+    "label_ai": {
+      "type": "set",
+      "values": {
+        "label": "steps.classify.output.label"
+      },
+      "next": "check"
+    },
+    "review": {
+      "type": "human",
+      "task": "order.review",
+      "input": {
+        "order_id": "input.order_id"
+      },
+      "outcomes": {
+        "approved": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "label"
+          ],
+          "additionalProperties": false
+        },
+        "rejected": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "abort": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "sla": {
+        "after": "1d",
+        "alert": "order.review_late"
+      },
+      "on": {
+        "approved": "label_human",
+        "rejected": "fail",
+        "abort": "undo"
+      }
+    },
+    "label_human": {
+      "type": "set",
+      "values": {
+        "label": "steps.review.output.label"
+      },
+      "next": "check"
+    },
+    "check": {
+      "type": "decide",
+      "cases": [
+        {
+          "when": "steps.fetch.output.item_count > 0",
+          "next": "charge"
+        }
+      ],
+      "else": "done"
+    },
+    "charge": {
+      "type": "call",
+      "capability": "shop.charge",
+      "version": 1,
+      "input": {
+        "order_id": "input.order_id"
+      },
+      "compensate": {
+        "capability": "shop.refund",
+        "version": 1,
+        "input": {
+          "order_id": "input.order_id"
+        }
+      },
+      "on": {
+        "charged": "audit",
+        "declined": "fail",
+        "failed": "fail",
+        "unknown": "fail"
+      }
+    },
+    "audit": {
+      "type": "signal",
+      "to": {
+        "workflow": {
+          "expr": "'audit:' + input.order_id"
+        }
+      },
+      "start": {
+        "definition": "audit",
+        "version": 1,
+        "input": {
+          "order_id": "input.order_id"
+        }
+      },
+      "name": "charged",
+      "payload": {
+        "charge_id": "steps.charge.output.charge_id"
+      },
+      "next": "ship_wait"
+    },
+    "ship_wait": {
+      "type": "wait",
+      "signal": "shipped",
+      "timeout": {
+        "const": "7d"
+      },
+      "sla": {
+        "after": "3d",
+        "alert": "order.ship_late"
+      },
+      "on": {
+        "received": "lines",
+        "timeout": "fail"
+      }
+    },
+    "lines": {
+      "type": "spawn",
+      "definition": "line",
+      "version": 1,
+      "foreach": "steps.fetch.output.lines",
+      "key": "item.line_id",
+      "input": {
+        "line_id": "item.line_id",
+        "order_id": "input.order_id"
+      },
+      "wait": "all",
+      "next": "done",
+      "onChildFailed": "fail"
+    },
+    "undo": {
+      "type": "signal",
+      "to": {
+        "children": "lines"
+      },
+      "name": "stop",
+      "next": "undo_comp"
+    },
+    "undo_comp": {
+      "type": "compensate",
+      "next": "cancelled"
+    },
+    "done": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "label": "vars.label"
+      }
+    },
+    "fail": {
+      "type": "end",
+      "status": "failed"
+    },
+    "cancelled": {
+      "type": "end",
+      "status": "cancelled"
+    }
+  }
+}

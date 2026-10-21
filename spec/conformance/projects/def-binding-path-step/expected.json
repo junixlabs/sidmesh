@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_BINDING_PATH",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/done/output/label"
+    }
+  ]
+}

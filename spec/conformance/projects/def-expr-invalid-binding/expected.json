@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_EXPR_INVALID",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/fetch/input/order_id/expr"
+    }
+  ]
+}

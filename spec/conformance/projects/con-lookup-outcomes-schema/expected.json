@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_LOOKUP_OUTCOMES",
+      "file": "nodes/shop/contracts/charge.v1.json",
+      "pointer": "/lookup"
+    }
+  ]
+}

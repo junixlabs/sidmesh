@@ -1,0 +1,158 @@
+[
+  {
+    "note": "json/plain object",
+    "keys": "k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "nonce": "AAECAwQFBgcICQoL",
+    "payload": {
+      "metadata": {
+        "encoding": "anNvbi9wbGFpbg=="
+      },
+      "data": "eyJvcmRlcl9yZWYiOiJEUC0xMDAxIn0="
+    },
+    "protobuf": "ChYKCGVuY29kaW5nEgpqc29uL3BsYWluEhd7Im9yZGVyX3JlZiI6IkRQLTEwMDEifQ==",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRTcE6CLoXTpKPnso+MSHuy4qEScGjYSKnCep3IbZNdzT9yZyeMoujD0Uty4txkak7nAGXb7Jdnb0nTdbpzUrh8="
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "several metadata keys, written in sorted key order",
+    "keys": "k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "nonce": "8OHSw7Sllod4aVpL",
+    "payload": {
+      "metadata": {
+        "encoding": "anNvbi9wbGFpbg==",
+        "messageType": "c2lkbWVzaC52MS5SZXN1bHQ=",
+        "x-sidmesh": "MQ=="
+      },
+      "data": "eyJvdXRjb21lIjoiZG9uZSIsIm91dHB1dCI6e319"
+    },
+    "protobuf": "ChYKCGVuY29kaW5nEgpqc29uL3BsYWluCiAKC21lc3NhZ2VUeXBlEhFzaWRtZXNoLnYxLlJlc3VsdAoOCgl4LXNpZG1lc2gSATESHnsib3V0Y29tZSI6ImRvbmUiLCJvdXRwdXQiOnt9fQ==",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "8OHSw7Sllod4aVpL5cOx78H94Nbi6Iw1qUQFibeVMFhCh8hRB9u0LTHDYisMdZDoPIrrCs/CwvtEydl82YAzvZwaPly+FPQ+WObY6VlpgfSqpkjbMBkg0zWqGX/X5TnuIR4/x9/3l4aOCUV5fO63/luC9vnRdagFdosJhZIAl4peVTpmWBM="
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "binary/null: empty data, so protobuf field 2 is omitted",
+    "keys": "k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "nonce": "AAECAwQFBgcICQoL",
+    "payload": {
+      "metadata": {
+        "encoding": "YmluYXJ5L251bGw="
+      },
+      "data": ""
+    },
+    "protobuf": "ChcKCGVuY29kaW5nEgtiaW5hcnkvbnVsbA==",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRXcE6CLoXTpKPnso+IaBO239U3fFSoQVL5G8FDuPwJ5A86ioPDUIig="
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "non-ASCII data over 127 bytes (two-byte length varints)",
+    "keys": "k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "nonce": "8OHSw7Sllod4aVpL",
+    "payload": {
+      "metadata": {
+        "encoding": "anNvbi9wbGFpbg=="
+      },
+      "data": "eyJub3RlIjoixJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogxJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogxJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogIn0="
+    },
+    "protobuf": "ChYKCGVuY29kaW5nEgpqc29uL3BsYWluEocCeyJub3RlIjoixJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogxJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogxJDGoW4gaMOgbmcg4oCUIOazqOaWhyDwn5qaIMSQxqFuIGjDoG5nIOKAlCDms6jmlocg8J+amiDEkMahbiBow6BuZyDigJQg5rOo5paHIPCfmpogIn0=",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "8OHSw7Sllod4aVpL5cOx78H94Nbi6Iw1qUQFibeVMFhCh8hRH3y8XX7IfiwIMM+egWpIubCRw1yJws00FXaWsyjM5c9E597AzXU65O6QIzih9UgKkUZV7awI4ipFNf5l0rslFSQCY8NotaG3Z7qvSI/Oq6JOiCSLquCajYy5mMHASeG7O0X2fi7d39ZKmPnJDxjl8+sBXUEDD/SBMFayLTyfqQaP3959fEtpW15BfKPEjL7YglYocJM7dwe2dmLKXwdeghqx8XsMmVKXc1OFv5CK3fhVARjdOwNIQBgsqGZ7SGGuBgO2pptsqrXpNIX8pS+PejDqo7K4vUSyC0rUr9U7mice5Lpo5wUr+D1zNZXXReAODDCwbXDnGEi8Jr5yP0F3sd62H8EHjdHIawAAKWTco53o40CmES6ovFw1"
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "first listed key encrypts after rotation",
+    "keys": "k2:ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8=,k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "nonce": "AAECAwQFBgcICQoL",
+    "payload": {
+      "metadata": {
+        "encoding": "anNvbi9wbGFpbg=="
+      },
+      "data": "InJvdGF0ZWQi"
+    },
+    "protobuf": "ChYKCGVuY29kaW5nEgpqc29uL3BsYWluEgkicm90YXRlZCI=",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azI="
+      },
+      "data": "AAECAwQFBgcICQoLVkRXry9biIPYkKehNHk0T3wexhQGcM9/NgTxyNT1quxJujCqXS0KhuUjFb5bt5mWDvqu"
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "decrypts with the second listed key (written before rotation)",
+    "keys": "k2:ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8=,k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "payload": {
+      "metadata": {
+        "encoding": "anNvbi9wbGFpbg=="
+      },
+      "data": "eyJvcmRlcl9yZWYiOiJEUC0xMDAxIn0="
+    },
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRTcE6CLoXTpKPnso+MSHuy4qEScGjYSKnCep3IbZNdzT9yZyeMoujD0Uty4txkak7nAGXb7Jdnb0nTdbpzUrh8="
+    },
+    "expect": "ok"
+  },
+  {
+    "note": "same key id, wrong key bytes: authentication fails",
+    "keys": "k1:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo=",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRTcE6CLoXTpKPnso+MSHuy4qEScGjYSKnCep3IbZNdzT9yZyeMoujD0Uty4txkak7nAGXb7Jdnb0nTdbpzUrh8="
+    },
+    "expect": "error"
+  },
+  {
+    "note": "key id not in the list",
+    "keys": "k2:ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8=",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRTcE6CLoXTpKPnso+MSHuy4qEScGjYSKnCep3IbZNdzT9yZyeMoujD0Uty4txkak7nAGXb7Jdnb0nTdbpzUrh8="
+    },
+    "expect": "error"
+  },
+  {
+    "note": "tag altered by one bit",
+    "keys": "k1:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+    "encrypted": {
+      "metadata": {
+        "encoding": "YmluYXJ5L2VuY3J5cHRlZA==",
+        "encryption-key-id": "azE="
+      },
+      "data": "AAECAwQFBgcICQoLTRTcE6CLoXTpKPnso+MSHuy4qEScGjYSKnCep3IbZNdzT9yZyeMoujD0Uty4txkak7nAGXb7Jdnb0nTdbpzUrh4="
+    },
+    "expect": "error"
+  }
+]

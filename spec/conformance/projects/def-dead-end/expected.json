@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_DEAD_END",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/loop"
+    }
+  ]
+}

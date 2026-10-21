@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_DURATION_INVALID",
+      "file": "definitions/audit.v1.json",
+      "pointer": "/steps/collect/collect/window"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_RESERVED_OUTCOME",
+      "file": "nodes/shop/contracts/peek.v1.json",
+      "pointer": "/outcomes/not_found"
+    }
+  ]
+}

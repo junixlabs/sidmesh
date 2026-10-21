@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidmesh.dev/spec/v0.2/node.schema.json",
+  "title": "SidMesh node manifest",
+  "description": "node.json at the root of a node directory. A node is a unit of responsibility; it owns one or more capabilities declared by the contracts in its contracts/ directory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "responsibility", "runtime"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "description": "Unique node id. Every capability this node owns is named <id>.<verb>.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "maxLength": 64
+    },
+    "responsibility": {
+      "description": "One sentence: what this node is responsible for.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "notOwned": {
+      "description": "What this node explicitly does not do, so neighbours and agents do not push it there.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 300 },
+      "default": []
+    },
+    "runtime": {
+      "description": "Language the handlers are written in. Decides which worker (task queue) runs them.",
+      "enum": ["go", "ts"]
+    },
+    "permissions": {
+      "description": "Permissions a principal needs to call any capability of this node.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*:[a-z][a-z0-9_]*$" },
+      "default": []
+    }
+  }
+}

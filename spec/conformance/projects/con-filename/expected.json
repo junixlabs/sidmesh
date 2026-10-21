@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_FILENAME",
+      "file": "nodes/shop/contracts/get_order.v2.json"
+    }
+  ]
+}

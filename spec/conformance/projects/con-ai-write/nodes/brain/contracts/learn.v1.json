@@ -1,0 +1,47 @@
+{
+  "capability": "brain.learn",
+  "version": 1,
+  "kind": "ai",
+  "effects": "write",
+  "summary": "brain.learn v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "learned": {
+      "description": "Learned",
+      "output": {
+        "type": "object",
+        "properties": {
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "confidence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "idempotency": {
+    "key": [
+      "input.order_id"
+    ]
+  },
+  "lookup": {
+    "capability": "brain.learn_status",
+    "version": 1
+  }
+}

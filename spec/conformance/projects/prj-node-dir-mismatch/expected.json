@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_NODE_DIR_MISMATCH",
+      "file": "nodes/store/node.json",
+      "pointer": "/id"
+    }
+  ]
+}

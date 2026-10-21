@@ -1,0 +1,20 @@
+{
+  "id": "fanout", "version": 1,
+  "description": "An interrupt while a spawn waits for all its children.",
+  "input": {"type": "object", "properties": {"names": {"type": "array", "items": {"type": "string"}}}, "required": ["names"], "additionalProperties": false},
+  "signals": {
+    "abort": {"schema": {"type": "object", "properties": {}, "additionalProperties": false}, "goto": "stop"},
+    "ack": {"schema": {"type": "object", "properties": {"name": {"type": "string"}, "mode": {"type": "string"}, "label": {"type": "string"}, "from": {"type": "string"}, "tenant": {"type": "string"}}, "additionalProperties": false}}
+  },
+  "start": "kids",
+  "steps": {
+    "kids": {"type": "spawn", "definition": "worker", "version": 1,
+      "foreach": "input.names", "key": {"expr": "item"}, "input": {"name": {"expr": "item"}},
+      "wait": "all", "next": "done"},
+    "done": {"type": "end", "status": "completed", "output": {"children": "steps.kids.output.children"}},
+    "stop": {"type": "signal", "to": {"children": "kids"}, "name": "poke", "payload": {"from": {"const": "stop"}}, "next": "acks"},
+    "acks": {"type": "wait", "signal": "ack", "collect": {"window": {"const": "1h"}, "max": 2},
+      "timeout": {"const": "1d"}, "on": {"received": "stopped", "timeout": "stopped"}},
+    "stopped": {"type": "end", "status": "cancelled", "output": {"acks": "steps.acks.output.items"}}
+  }
+}

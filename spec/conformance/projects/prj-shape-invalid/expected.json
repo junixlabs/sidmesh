@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_SHAPE_INVALID",
+      "file": "nodes/shop/node.json",
+      "pointer": ""
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_WRITE_LOOKUP",
+      "file": "nodes/shop/contracts/poke.v1.json"
+    }
+  ]
+}

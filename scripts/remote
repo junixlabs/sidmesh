@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Run a command on a remote host against one subdirectory of this repo.
+# Host and base directory come from the environment: SIDMESH_REMOTE (an ssh host, required)
+# and SIDMESH_REMOTE_DIR (default `src`, relative to the remote home).
+# Local is the source of truth for code: the subdirectory is pushed (with --delete),
+# the command runs remotely, then files the command produced (go.sum, lockfiles,
+# generated code) are pulled back, never over a local file that is newer (-u). Each agent owns one subdirectory, so syncs never race.
+#
+# Usage: scripts/remote <subdir> '<command>'     e.g. scripts/remote go 'go test ./...'
+set -uo pipefail
+SUB="${1:?subdir}"; CMD="${2:?command}"
+HOST="${SIDMESH_REMOTE:?set SIDMESH_REMOTE to the ssh host}"; BASE="${SIDMESH_REMOTE_DIR:-src}"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"; NAME="$(basename "$ROOT")"
+EXCLUDES=(--exclude node_modules --exclude .git --exclude dist --exclude .DS_Store --exclude .env)
+ssh -o BatchMode=yes "$HOST" "mkdir -p ~/$BASE/$NAME/$SUB" || exit 1
+rsync -az --delete "${EXCLUDES[@]}" "$ROOT/$SUB/" "$HOST:$BASE/$NAME/$SUB/" || exit 1
+ssh -o BatchMode=yes "$HOST" "export PATH=\$HOME/.local/go/bin:\$HOME/go/bin:\$HOME/.local/bin:\$PATH; cd ~/$BASE/$NAME/$SUB && $CMD"
+RC=$?
+rsync -azu "${EXCLUDES[@]}" "$HOST:$BASE/$NAME/$SUB/" "$ROOT/$SUB/"
+exit $RC

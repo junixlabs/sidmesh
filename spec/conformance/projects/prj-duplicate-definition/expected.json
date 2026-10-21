@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_DUPLICATE_DEFINITION",
+      "file": "definitions/zz-line.v1.json",
+      "pointer": "/id"
+    }
+  ]
+}

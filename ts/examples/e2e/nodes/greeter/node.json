@@ -1,0 +1,5 @@
+{
+  "id": "greeter",
+  "responsibility": "Writes a greeting; exists to prove a call step runs on the TS worker.",
+  "runtime": "ts"
+}

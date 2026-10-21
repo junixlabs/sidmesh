@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_SPEC_UNSUPPORTED",
+      "file": "sidmesh.json",
+      "pointer": "/spec"
+    }
+  ]
+}

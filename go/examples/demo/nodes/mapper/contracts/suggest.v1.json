@@ -1,0 +1,9 @@
+{
+  "capability": "mapper.suggest", "version": 1, "kind": "ai", "effects": "none",
+  "summary": "Suggest an option set for a sku.",
+  "input": {"type": "object", "properties": {"sku": {"type": "string"}}, "required": ["sku"], "additionalProperties": false},
+  "outcomes": {
+    "suggested": {"description": "A suggestion.", "output": {"type": "object", "properties": {"option_set": {"type": "string"}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}}, "required": ["option_set", "confidence"], "additionalProperties": false}}
+  },
+  "ledger": ["input.sku", "output.option_set"]
+}

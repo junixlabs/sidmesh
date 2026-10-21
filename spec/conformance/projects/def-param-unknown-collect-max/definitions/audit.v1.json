@@ -1,0 +1,61 @@
+{
+  "id": "audit",
+  "version": 1,
+  "description": "Started by signal: collects charge notices for an order for an hour.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "signals": {
+    "charged": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "charge_id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "start": "collect",
+  "steps": {
+    "collect": {
+      "type": "wait",
+      "signal": "charged",
+      "collect": {
+        "window": {
+          "const": "1h"
+        },
+        "max": "params.max"
+      },
+      "on": {
+        "received": "end"
+      }
+    },
+    "end": {
+      "type": "end",
+      "status": "completed",
+      "drain": [
+        "charged"
+      ],
+      "output": {
+        "count": {
+          "expr": "size(steps.collect.output.items)"
+        }
+      }
+    }
+  }
+}

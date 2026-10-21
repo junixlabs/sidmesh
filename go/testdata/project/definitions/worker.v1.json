@@ -1,0 +1,19 @@
+{
+  "id": "worker", "version": 1,
+  "description": "A child that waits to be poked, then reports to its parent.",
+  "input": {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"], "additionalProperties": false},
+  "params": {
+    "mode": {"schema": {"type": "string"}, "default": "default"},
+    "label": {"schema": {"type": "string"}, "default": "none"}
+  },
+  "signals": {"poke": {"schema": {"type": "object", "properties": {"from": {"type": "string"}}, "required": ["from"], "additionalProperties": false}}},
+  "start": "listen",
+  "steps": {
+    "listen": {"type": "wait", "signal": "poke", "timeout": {"const": "1d"}, "on": {"received": "ack", "timeout": "late"}},
+    "ack": {"type": "signal", "to": "parent", "name": "ack",
+      "payload": {"name": "input.name", "mode": "params.mode", "label": "params.label", "from": "steps.listen.output.from", "tenant": "workflow.tenant"},
+      "next": "done"},
+    "done": {"type": "end", "status": "completed", "output": {"name": "input.name"}},
+    "late": {"type": "end", "status": "failed"}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "capability": "vendor.place_order", "version": 1, "kind": "action", "effects": "write",
+  "summary": "Place an order for one sku.",
+  "input": {"type": "object", "properties": {"order_id": {"type": "string"}, "sku": {"type": "string"}}, "required": ["order_id", "sku"], "additionalProperties": false},
+  "outcomes": {"accepted": {"description": "Vendor took the order.", "output": {"type": "object", "properties": {"po_id": {"type": "string"}}, "required": ["po_id"], "additionalProperties": false}}, "rejected": {"description": "Vendor refused.", "output": {"type": "object", "properties": {"reason": {"type": "string"}}, "required": ["reason"], "additionalProperties": false}}},
+  "idempotency": {"key": ["input.order_id", "input.sku"]},
+  "lookup": {"capability": "vendor.find_order", "version": 1},
+  "defaults": {"timeout": "10s", "retry": {"maxAttempts": 2, "initialInterval": "1s"}}
+}

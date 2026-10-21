@@ -1,0 +1,64 @@
+{
+  "capability": "shop.charge",
+  "version": 1,
+  "kind": "action",
+  "effects": "write",
+  "summary": "shop.charge v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "charged": {
+      "description": "Charge accepted",
+      "output": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "charge_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "declined": {
+      "description": "Charge refused",
+      "output": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "idempotency": {
+    "key": [
+      "input.order_id"
+    ]
+  },
+  "lookup": {
+    "capability": "shop.charge_status",
+    "version": 1
+  },
+  "ledger": [
+    "input.order_id",
+    "output.reason"
+  ]
+}

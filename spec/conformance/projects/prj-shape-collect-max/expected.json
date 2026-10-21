@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_SHAPE_INVALID",
+      "file": "definitions/batch.v1.json",
+      "pointer": "/steps/collect/collect/max"
+    }
+  ]
+}

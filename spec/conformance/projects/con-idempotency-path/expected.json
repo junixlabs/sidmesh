@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_IDEMPOTENCY_PATH",
+      "file": "nodes/shop/contracts/charge.v1.json",
+      "pointer": "/idempotency/key/0"
+    }
+  ]
+}

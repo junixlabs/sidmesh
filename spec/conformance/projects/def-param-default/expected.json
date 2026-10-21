@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_PARAM_DEFAULT",
+      "file": "definitions/main.v1.json",
+      "pointer": "/params/threshold/default"
+    }
+  ]
+}

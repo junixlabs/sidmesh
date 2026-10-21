@@ -1,0 +1,6 @@
+# pnpm 11+ reads allowBuilds (onlyBuiltDependencies is silently ignored since pnpm 11).
+allowBuilds:
+  esbuild: true
+  "@temporalio/core-bridge": true
+  protobufjs: true
+  "@swc/core": true

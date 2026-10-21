@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_INPUT_MISSING",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/charge/compensate/input"
+    }
+  ]
+}

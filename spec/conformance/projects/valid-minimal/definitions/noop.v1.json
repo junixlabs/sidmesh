@@ -1,0 +1,18 @@
+{
+  "id": "noop",
+  "version": 1,
+  "description": "Ends at once.",
+  "input": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "start": "end",
+  "steps": {
+    "end": {
+      "type": "end",
+      "status": "completed"
+    }
+  }
+}

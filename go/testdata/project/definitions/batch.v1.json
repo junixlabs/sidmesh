@@ -1,0 +1,185 @@
+{
+  "id": "batch",
+  "version": 1,
+  "description": "Exercises vars and set, wait collect, spawn params, signalling children and step times.",
+  "input": {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+  },
+  "params": {
+    "mode": {
+      "schema": {
+        "type": "string"
+      },
+      "default": "slow"
+    },
+    "window": {
+      "schema": {
+        "type": "string"
+      },
+      "default": "1h"
+    },
+    "acks_max": {
+      "schema": {
+        "type": "integer"
+      },
+      "default": 3
+    }
+  },
+  "vars": {
+    "count": {
+      "schema": {
+        "type": "integer"
+      },
+      "default": 0
+    },
+    "started": {
+      "schema": {
+        "type": "string"
+      },
+      "default": ""
+    }
+  },
+  "signals": {
+    "add": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ack": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "tenant": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "start": "init",
+  "steps": {
+    "init": {
+      "type": "set",
+      "values": {
+        "count": {
+          "expr": "vars.count + 1"
+        },
+        "started": "workflow.now"
+      },
+      "next": "gather"
+    },
+    "gather": {
+      "type": "wait",
+      "signal": "add",
+      "collect": {
+        "window": "params.window",
+        "max": 3
+      },
+      "timeout": {
+        "const": "1d"
+      },
+      "on": {
+        "received": "kids",
+        "timeout": "empty"
+      }
+    },
+    "kids": {
+      "type": "spawn",
+      "definition": "worker",
+      "version": 1,
+      "foreach": "steps.gather.output.items",
+      "key": "item.name",
+      "input": {
+        "name": "item.name"
+      },
+      "params": {
+        "label": {
+          "const": "batch"
+        }
+      },
+      "wait": "none",
+      "next": "poke"
+    },
+    "poke": {
+      "type": "signal",
+      "to": {
+        "children": "kids"
+      },
+      "name": "poke",
+      "payload": {
+        "from": "workflow.id"
+      },
+      "next": "acks"
+    },
+    "acks": {
+      "type": "wait",
+      "signal": "ack",
+      "collect": {
+        "window": {
+          "const": "1h"
+        },
+        "max": "params.acks_max"
+      },
+      "timeout": {
+        "const": "1d"
+      },
+      "on": {
+        "received": "tally",
+        "timeout": "empty"
+      }
+    },
+    "tally": {
+      "type": "set",
+      "values": {
+        "count": {
+          "expr": "vars.count + size(steps.gather.output.items)"
+        }
+      },
+      "next": "done"
+    },
+    "done": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "count": "vars.count",
+        "started": "vars.started",
+        "init_ended": "steps.init.ended_at",
+        "items": "steps.gather.output.items",
+        "acks": "steps.acks.output.items",
+        "spawned": "steps.kids.output.count",
+        "gather_started": "steps.gather.started_at",
+        "waited": {
+          "expr": "string(timestamp(steps.gather.ended_at) - timestamp(steps.gather.started_at))"
+        }
+      }
+    },
+    "empty": {
+      "type": "end",
+      "status": "failed"
+    }
+  }
+}

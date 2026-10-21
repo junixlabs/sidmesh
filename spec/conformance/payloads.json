@@ -1,0 +1,819 @@
+{
+  "contracts": {
+    "place": {
+      "capability": "shop.place",
+      "version": 1,
+      "kind": "action",
+      "effects": "none",
+      "summary": "Payload conformance contract",
+      "config": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "enum": [
+              "us",
+              "eu"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "order_ref",
+          "quantity",
+          "lines"
+        ],
+        "properties": {
+          "order_ref": {
+            "type": "string",
+            "pattern": "^ord-[0-9]+$"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/line"
+            }
+          }
+        },
+        "$defs": {
+          "line": {
+            "type": "object",
+            "properties": {
+              "sku": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sku"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "outcomes": {
+        "placed": {
+          "description": "Placed",
+          "output": {
+            "type": "object",
+            "properties": {
+              "po_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "held"
+                ]
+              }
+            },
+            "required": [
+              "po_id",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rejected": {
+          "description": "Refused",
+          "output": {
+            "type": "object",
+            "properties": {
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "label": {
+      "capability": "brain.label",
+      "version": 1,
+      "kind": "ai",
+      "effects": "none",
+      "summary": "AI output conformance",
+      "input": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "outcomes": {
+        "labelled": {
+          "description": "Label",
+          "output": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "label",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "notify": {
+      "capability": "shop.notify",
+      "version": 1,
+      "kind": "action",
+      "effects": "none",
+      "summary": "Format assertion (SPEC v0.1 §2)",
+      "input": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "at",
+          "day",
+          "email",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "outcomes": {
+        "sent": {
+          "description": "Sent",
+          "output": {
+            "type": "object",
+            "properties": {
+              "link": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "link"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "ok",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "ok",
+      "config": {
+        "region": "us"
+      }
+    },
+    {
+      "name": "ok-config-omitted",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "ok-other-outcome",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "rejected",
+        "output": {
+          "reason": "closed"
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "ok-nullable-null",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ],
+        "note": null
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "ok-maxlength-counts-code-points",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ],
+        "note": "😀😀"
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "input-missing-required",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-extra-property",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ],
+        "colour": "red"
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-wrong-type",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": "2",
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-not-integer",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 1.5,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-below-minimum",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 0,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-pattern",
+      "contract": "place",
+      "input": {
+        "order_ref": "ORD-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-maxlength",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ],
+        "note": "abc"
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-ref-item-invalid",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A",
+            "qty": 1
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "input-min-items",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": []
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "config-enum",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID",
+      "config": {
+        "region": "asia"
+      }
+    },
+    {
+      "name": "config-extra",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open"
+        }
+      },
+      "expect": "INPUT_INVALID",
+      "config": {
+        "region": "us",
+        "debug": true
+      }
+    },
+    {
+      "name": "outcome-undeclared",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "queued",
+        "output": {}
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "outcome-reserved-failed",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "failed",
+        "output": {}
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "output-of-other-outcome",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "reason": "closed"
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "output-missing-required",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1"
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "output-extra",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "open",
+          "x": 1
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "output-enum",
+      "contract": "place",
+      "input": {
+        "order_ref": "ord-1",
+        "quantity": 2,
+        "lines": [
+          {
+            "sku": "A"
+          }
+        ]
+      },
+      "result": {
+        "outcome": "placed",
+        "output": {
+          "po_id": "po-1",
+          "status": "closed"
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "ai-ok",
+      "contract": "label",
+      "input": {
+        "text": "hi"
+      },
+      "result": {
+        "outcome": "labelled",
+        "output": {
+          "label": "x",
+          "confidence": 0.9
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "ai-confidence-above-one",
+      "contract": "label",
+      "input": {
+        "text": "hi"
+      },
+      "result": {
+        "outcome": "labelled",
+        "output": {
+          "label": "x",
+          "confidence": 1.2
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "ai-confidence-missing",
+      "contract": "label",
+      "input": {
+        "text": "hi"
+      },
+      "result": {
+        "outcome": "labelled",
+        "output": {
+          "label": "x"
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    },
+    {
+      "name": "format-ok",
+      "contract": "notify",
+      "input": {
+        "at": "2026-10-16T08:30:00Z",
+        "day": "2026-10-16",
+        "email": "ops@example.com",
+        "id": "3f2b8c1e-6d4a-4c1b-9a7e-2f1d0c9b8a76"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "https://track.example.com/x"
+        }
+      },
+      "expect": "ok"
+    },
+    {
+      "name": "format-date-time",
+      "contract": "notify",
+      "input": {
+        "at": "16/10/2026 08:30",
+        "day": "2026-10-16",
+        "email": "ops@example.com",
+        "id": "3f2b8c1e-6d4a-4c1b-9a7e-2f1d0c9b8a76"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "https://track.example.com/x"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "format-date",
+      "contract": "notify",
+      "input": {
+        "at": "2026-10-16T08:30:00Z",
+        "day": "2026-13-01",
+        "email": "ops@example.com",
+        "id": "3f2b8c1e-6d4a-4c1b-9a7e-2f1d0c9b8a76"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "https://track.example.com/x"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "format-email",
+      "contract": "notify",
+      "input": {
+        "at": "2026-10-16T08:30:00Z",
+        "day": "2026-10-16",
+        "email": "not an email",
+        "id": "3f2b8c1e-6d4a-4c1b-9a7e-2f1d0c9b8a76"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "https://track.example.com/x"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "format-uuid",
+      "contract": "notify",
+      "input": {
+        "at": "2026-10-16T08:30:00Z",
+        "day": "2026-10-16",
+        "email": "ops@example.com",
+        "id": "1234"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "https://track.example.com/x"
+        }
+      },
+      "expect": "INPUT_INVALID"
+    },
+    {
+      "name": "format-uri-output",
+      "contract": "notify",
+      "input": {
+        "at": "2026-10-16T08:30:00Z",
+        "day": "2026-10-16",
+        "email": "ops@example.com",
+        "id": "3f2b8c1e-6d4a-4c1b-9a7e-2f1d0c9b8a76"
+      },
+      "result": {
+        "outcome": "sent",
+        "output": {
+          "link": "track page"
+        }
+      },
+      "expect": "OUTPUT_INVALID"
+    }
+  ]
+}

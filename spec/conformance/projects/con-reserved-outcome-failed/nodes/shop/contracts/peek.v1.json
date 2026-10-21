@@ -1,0 +1,39 @@
+{
+  "capability": "shop.peek",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "shop.peek v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "x": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "x"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "seen": {
+      "description": "Seen",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "failed": {
+      "description": "Not allowed",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

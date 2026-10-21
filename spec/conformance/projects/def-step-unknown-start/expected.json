@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_STEP_UNKNOWN",
+      "file": "definitions/line.v1.json",
+      "pointer": "/start"
+    }
+  ]
+}

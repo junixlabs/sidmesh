@@ -1,0 +1,66 @@
+{
+  "capability": "shop.get_order",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "shop.get_order v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "found": {
+      "description": "Order exists",
+      "output": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string"
+          },
+          "item_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "line_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "line_id"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "order_id",
+          "item_count",
+          "lines"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "missing": {
+      "description": "No such order",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

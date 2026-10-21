@@ -1,0 +1,179 @@
+[
+  {
+    "note": "single string",
+    "tenant": "acme",
+    "capability": "shop.charge",
+    "version": 1,
+    "values": [
+      "ord-1"
+    ],
+    "encoded": [
+      "\"ord-1\""
+    ],
+    "key": "ede7060f6d922f97d181e73c294b6450d3fb4d83367a6a759f4eed8a7d197e7a"
+  },
+  {
+    "note": "string and integer",
+    "tenant": "acme",
+    "capability": "shop.charge",
+    "version": 1,
+    "values": [
+      "ord-1",
+      2
+    ],
+    "encoded": [
+      "\"ord-1\"",
+      "2"
+    ],
+    "key": "53fb1c6b257d7e9ecf845d3f6e682dd5918284c89ab92f08dfd8d5f6cd4bb7a5"
+  },
+  {
+    "note": "same values, other version",
+    "tenant": "acme",
+    "capability": "shop.charge",
+    "version": 2,
+    "values": [
+      "ord-1"
+    ],
+    "encoded": [
+      "\"ord-1\""
+    ],
+    "key": "f55f4a6d1b6e13bd9d6fe982a1e63ceaad20e057e5a3ec6d96beacf2ffb48c37"
+  },
+  {
+    "note": "same values, other tenant",
+    "tenant": "lesmers",
+    "capability": "shop.charge",
+    "version": 1,
+    "values": [
+      "ord-1"
+    ],
+    "encoded": [
+      "\"ord-1\""
+    ],
+    "key": "6e2cdb2540c2eb2758d92a36e158cb176aab684a7812b7d5c497732b1ebff8d2"
+  },
+  {
+    "note": "non-ASCII and astral plane",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      "Đơn hàng 😀",
+      "sup-9"
+    ],
+    "encoded": [
+      "\"Đơn hàng 😀\"",
+      "\"sup-9\""
+    ],
+    "key": "3d9d08414e7829e3e27af49831dc2104bbf3723cc8f32a19fb0ea5bc12a35188"
+  },
+  {
+    "note": "null",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      null,
+      "x"
+    ],
+    "encoded": [
+      "null",
+      "\"x\""
+    ],
+    "key": "f085c9e89d3759b5a41de9c7235966954d72896a0505ec5a4bff90281f069eef"
+  },
+  {
+    "note": "nested object, keys out of order",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      {
+        "b": 1,
+        "a": [
+          1,
+          "x",
+          null
+        ]
+      }
+    ],
+    "encoded": [
+      "{\"a\":[1,\"x\",null],\"b\":1}"
+    ],
+    "key": "a926d87edcd8c2f3954739bb355cfa3bccbe141fb2095ee996ec70319d9455f3"
+  },
+  {
+    "note": "numbers",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      1.5,
+      9007199254740991,
+      -3
+    ],
+    "encoded": [
+      "1.5",
+      "9007199254740991",
+      "-3"
+    ],
+    "key": "b2d1a4e36c24fd0040bd52b8675b6a462a450415293e37631d9ec7e1227b0526"
+  },
+  {
+    "note": "characters Go escapes by default",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      "<tag>&\"q\"\n"
+    ],
+    "encoded": [
+      "\"<tag>&\\\"q\\\"\\n\""
+    ],
+    "key": "8291f413e0fd55d78af665ecdeb9504bbce2089a87d5485f1c9704af79e51fda"
+  },
+  {
+    "note": "booleans and empty string",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      true,
+      false,
+      ""
+    ],
+    "encoded": [
+      "true",
+      "false",
+      "\"\""
+    ],
+    "key": "327529a1c0ff2d08017671fd8e5fd093664156072b27842c3c0b9e545f254fee"
+  },
+  {
+    "note": "U+2028 and U+2029 are written raw, not escaped",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      "line sep para"
+    ],
+    "encoded": [
+      "\"line sep para\""
+    ],
+    "key": "9292185fbf8b6748b90f560a8d3c40210dd79cc166f16f670027318e0b44e475"
+  },
+  {
+    "note": "HTML characters are not escaped",
+    "tenant": "acme",
+    "capability": "supplier.place_po",
+    "version": 1,
+    "values": [
+      "<>&"
+    ],
+    "encoded": [
+      "\"<>&\""
+    ],
+    "key": "157a836973748e68270b3e088afa3353a63ada034357437c43b0f6a0deefc66f"
+  }
+]

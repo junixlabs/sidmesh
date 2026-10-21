@@ -1,0 +1,24 @@
+{
+  "id": "flow", "version": 1,
+  "description": "Exercises decide, wait on a signal, timers and the signal step.",
+  "input": {"type": "object", "properties": {"kind": {"type": "string"}, "peer": {"type": "string"}}, "required": ["kind"], "additionalProperties": false},
+  "signals": {"go": {"schema": {"type": "object", "properties": {"n": {"type": "integer"}}, "required": ["n"], "additionalProperties": false}}},
+  "start": "route",
+  "steps": {
+    "route": {"type": "decide", "cases": [
+        {"when": "input.kind == 'wait'", "next": "listen"},
+        {"when": "input.kind == 'timer'", "next": "nap"}],
+      "else": "other"},
+    "listen": {"type": "wait", "signal": "go", "timeout": {"const": "1h"},
+      "sla": {"after": "30m", "alert": "flow.slow"},
+      "on": {"received": "tell", "timeout": "timed_out"}},
+    "tell": {"type": "signal", "to": {"workflow": "input.peer"}, "name": "ping",
+      "payload": {"n": "steps.listen.output.n"}, "next": "got"},
+    "got": {"type": "end", "status": "completed",
+      "output": {"n": "steps.listen.output.n", "doubled": {"expr": "steps.listen.output.n * 2"}, "big": {"expr": "steps.listen.output.n > 5"}}},
+    "timed_out": {"type": "end", "status": "failed"},
+    "nap": {"type": "wait", "duration": {"const": "10m"}, "on": {"elapsed": "woke"}},
+    "woke": {"type": "end", "status": "completed"},
+    "other": {"type": "end", "status": "completed", "output": {"kind": "input.kind"}}
+  }
+}

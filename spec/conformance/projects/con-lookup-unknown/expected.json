@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_LOOKUP_UNKNOWN",
+      "file": "nodes/shop/contracts/poke.v1.json",
+      "pointer": "/lookup"
+    }
+  ]
+}

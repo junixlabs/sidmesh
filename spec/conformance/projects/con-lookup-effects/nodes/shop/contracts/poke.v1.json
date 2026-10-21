@@ -1,0 +1,39 @@
+{
+  "capability": "shop.poke",
+  "version": 1,
+  "kind": "action",
+  "effects": "write",
+  "summary": "shop.poke v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "x": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "x"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "done": {
+      "description": "Poked",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  },
+  "idempotency": {
+    "key": [
+      "input.x"
+    ]
+  },
+  "lookup": {
+    "capability": "shop.poke_check",
+    "version": 1
+  }
+}

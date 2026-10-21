@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_SCHEMA_STRICT",
+      "file": "nodes/shop/contracts/get_order.v1.json",
+      "pointer": "/input/properties/order_id"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "inbox", "version": 1,
+  "description": "Takes one add per run; end drain carries what is still queued into the next run.",
+  "input": {"type": "object", "properties": {"box": {"type": "string"}}, "required": ["box"], "additionalProperties": false},
+  "vars": {"count": {"schema": {"type": "integer"}, "default": 0}},
+  "signals": {
+    "add": {"schema": {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"], "additionalProperties": false}},
+    "note": {"schema": {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"], "additionalProperties": false}}
+  },
+  "start": "take",
+  "steps": {
+    "take": {"type": "wait", "signal": "add", "timeout": {"const": "1h"}, "on": {"received": "count", "timeout": "idle"}},
+    "count": {"type": "set", "values": {"count": {"expr": "vars.count + 1"}}, "next": "done"},
+    "done": {"type": "end", "status": "completed", "drain": ["add"],
+      "output": {"name": "steps.take.output.name", "count": "vars.count", "note": "signals.note.text"}},
+    "idle": {"type": "end", "status": "completed", "output": {"count": "vars.count"}}
+  }
+}

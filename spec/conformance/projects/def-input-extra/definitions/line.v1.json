@@ -1,0 +1,48 @@
+{
+  "id": "line",
+  "version": 1,
+  "description": "Child: acknowledges one line to the parent.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "line_id": {
+        "type": "string"
+      },
+      "order_id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "line_id",
+      "order_id"
+    ],
+    "additionalProperties": false
+  },
+  "signals": {
+    "stop": {
+      "schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "goto": "end"
+    }
+  },
+  "start": "ack",
+  "steps": {
+    "ack": {
+      "type": "signal",
+      "to": "parent",
+      "name": "line_done",
+      "payload": {
+        "line_id": "input.line_id"
+      },
+      "next": "end"
+    },
+    "end": {
+      "type": "end",
+      "status": "completed"
+    }
+  }
+}

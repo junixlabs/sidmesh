@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_WAIT_SHAPE",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/ship_wait"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_STEP_UNKNOWN",
+      "file": "definitions/main.v1.json",
+      "pointer": "/signals/cancel/goto"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "order", "version": 1,
+  "description": "Fetch an order and run one item workflow per line.",
+  "input": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"], "additionalProperties": false},
+  "search": {"OrderId": "input.order_id", "OrderStage": "steps.fetch.outcome"},
+  "start": "fetch",
+  "steps": {
+    "fetch": {"type": "call", "capability": "shop.fetch_order", "version": 1,
+      "input": {"order_id": "input.order_id"},
+      "on": {"found": "items", "missing": "not_found", "failed": "broken"}},
+    "items": {"type": "spawn", "definition": "item", "version": 1,
+      "foreach": "steps.fetch.output.items", "key": "item.sku",
+      "input": {"order_id": "input.order_id", "sku": "item.sku"},
+      "wait": "all", "next": "done", "onChildFailed": "partial"},
+    "done": {"type": "end", "status": "completed", "output": {"children": "steps.items.output.children"}},
+    "partial": {"type": "end", "status": "failed", "output": {"children": "steps.items.output.children"}},
+    "not_found": {"type": "end", "status": "failed"},
+    "broken": {"type": "end", "status": "failed"}
+  }
+}

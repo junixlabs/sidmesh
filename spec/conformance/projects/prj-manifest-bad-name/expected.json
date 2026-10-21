@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_MANIFEST_INVALID",
+      "file": "sidmesh.json",
+      "pointer": "/name"
+    }
+  ]
+}

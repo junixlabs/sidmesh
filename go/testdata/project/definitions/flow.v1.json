@@ -1,0 +1,285 @@
+{
+  "id": "flow",
+  "version": 1,
+  "description": "Exercises decide, wait, timers, the signal step and its targets, and set.",
+  "input": {
+    "type": "object",
+    "properties": {
+      "kind": {
+        "type": "string"
+      },
+      "peer": {
+        "type": "string"
+      },
+      "score": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "kind"
+    ],
+    "additionalProperties": false
+  },
+  "signals": {
+    "go": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "n"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "start": "route",
+  "steps": {
+    "route": {
+      "type": "decide",
+      "cases": [
+        {
+          "when": "input.kind == 'wait'",
+          "next": "listen"
+        },
+        {
+          "when": "input.kind == 'timer'",
+          "next": "nap"
+        },
+        {
+          "when": "input.kind == 'badvar'",
+          "next": "bad_set"
+        },
+        {
+          "when": "input.kind == 'orphan'",
+          "next": "to_parent"
+        },
+        {
+          "when": "input.kind == 'start'",
+          "next": "start_peer"
+        },
+        {
+          "when": "input.kind == 'gone'",
+          "next": "to_gone"
+        },
+        {
+          "when": "input.kind == 'numbers'",
+          "next": "seed"
+        },
+        {
+          "when": "input.kind == 'start_once'",
+          "next": "start_once"
+        }
+      ],
+      "else": "other"
+    },
+    "listen": {
+      "type": "wait",
+      "signal": "go",
+      "timeout": {
+        "const": "1h"
+      },
+      "sla": {
+        "after": "30m",
+        "alert": "flow.slow"
+      },
+      "on": {
+        "received": "tell",
+        "timeout": "timed_out"
+      }
+    },
+    "tell": {
+      "type": "signal",
+      "to": {
+        "workflow": "input.peer"
+      },
+      "name": "ping",
+      "payload": {
+        "n": "steps.listen.output.n"
+      },
+      "next": "got"
+    },
+    "got": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "n": "steps.listen.output.n",
+        "doubled": {
+          "expr": "steps.listen.output.n * 2"
+        },
+        "big": {
+          "expr": "steps.listen.output.n > 5"
+        }
+      }
+    },
+    "timed_out": {
+      "type": "end",
+      "status": "failed"
+    },
+    "nap": {
+      "type": "wait",
+      "duration": {
+        "const": "10m"
+      },
+      "on": {
+        "elapsed": "woke"
+      }
+    },
+    "woke": {
+      "type": "end",
+      "status": "completed"
+    },
+    "other": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "kind": "input.kind"
+      }
+    },
+    "bad_set": {
+      "type": "set",
+      "values": {
+        "total": {
+          "expr": "'not a number'"
+        }
+      },
+      "next": "woke"
+    },
+    "to_parent": {
+      "type": "signal",
+      "to": "parent",
+      "name": "ping",
+      "payload": {},
+      "next": "woke"
+    },
+    "start_peer": {
+      "type": "signal",
+      "to": {
+        "workflow": "input.peer"
+      },
+      "name": "poke",
+      "payload": {
+        "from": "workflow.id"
+      },
+      "start": {
+        "definition": "worker",
+        "version": 1,
+        "input": {
+          "name": "input.peer"
+        },
+        "params": {
+          "mode": {
+            "const": "started"
+          }
+        }
+      },
+      "next": "woke"
+    },
+    "to_gone": {
+      "type": "signal",
+      "to": {
+        "workflow": "input.peer"
+      },
+      "name": "ping",
+      "payload": {},
+      "next": "tenant"
+    },
+    "tenant": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "tenant": "workflow.tenant",
+        "now": "workflow.now"
+      }
+    },
+    "seed": {
+      "type": "set",
+      "values": {
+        "total": {
+          "const": 5
+        }
+      },
+      "next": "bump"
+    },
+    "bump": {
+      "type": "set",
+      "values": {
+        "total": {
+          "expr": "vars.total + 1"
+        }
+      },
+      "next": "compare"
+    },
+    "compare": {
+      "type": "decide",
+      "cases": [
+        {
+          "when": "input.score < params.limit && input.score < vars.total",
+          "next": "low"
+        }
+      ],
+      "else": "high"
+    },
+    "low": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "total": "vars.total",
+        "band": {
+          "const": "low"
+        },
+        "half": {
+          "expr": "vars.total / 2"
+        }
+      }
+    },
+    "high": {
+      "type": "end",
+      "status": "completed",
+      "output": {
+        "total": "vars.total",
+        "band": {
+          "const": "high"
+        }
+      }
+    },
+    "start_once": {
+      "type": "signal",
+      "to": {
+        "workflow": "input.peer"
+      },
+      "name": "poke",
+      "payload": {
+        "from": "workflow.id"
+      },
+      "start": {
+        "definition": "worker",
+        "version": 1,
+        "input": {
+          "name": "input.peer"
+        },
+        "once": true
+      },
+      "next": "woke"
+    }
+  },
+  "vars": {
+    "total": {
+      "schema": {
+        "type": "integer"
+      },
+      "default": 0
+    }
+  },
+  "params": {
+    "limit": {
+      "schema": {
+        "type": "number"
+      },
+      "default": 1
+    }
+  }
+}

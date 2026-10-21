@@ -1,0 +1,8 @@
+{
+  "capability": "vendor.cancel_order", "version": 1, "kind": "action", "effects": "write",
+  "summary": "Cancel a placed order.",
+  "input": {"type": "object", "properties": {"po_id": {"type": "string"}}, "required": ["po_id"], "additionalProperties": false},
+  "outcomes": {"cancelled": {"description": "Order cancelled.", "output": {"type": "object", "properties": {}, "additionalProperties": false}}},
+  "idempotency": {"key": ["input.po_id"]},
+  "lookup": {"capability": "vendor.find_cancel", "version": 1}
+}

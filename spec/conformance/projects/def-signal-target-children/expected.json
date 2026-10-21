@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_SIGNAL_TARGET",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/undo"
+    }
+  ]
+}

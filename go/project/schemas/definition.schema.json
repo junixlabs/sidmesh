@@ -1,0 +1,826 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidmesh.dev/spec/v0.2/definition.schema.json",
+  "title": "SidMesh workflow definition",
+  "description": "definitions/<id>.v<version>.json. A graph of steps; each call step routes every outcome of its capability to a next step. Semantic rules are in SPEC.md (codes DEF_*).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "description",
+    "input",
+    "start",
+    "steps"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "maxLength": 64
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "input": {
+      "description": "What starting this workflow requires. Keep to references (ids), not copies of source data.",
+      "$ref": "contract.schema.json#/$defs/objectSchema"
+    },
+    "params": {
+      "description": "Values a tenant may tune without changing the graph. Bound as params.<name>.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "default"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "object"
+          },
+          "default": {}
+        }
+      }
+    },
+    "vars": {
+      "description": "Workflow variables, always defined (default), changed only by set steps. Bound as vars.<name>. Use them to merge branches, count attempts, accumulate.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "default"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "object"
+          },
+          "default": {}
+        }
+      }
+    },
+    "signals": {
+      "description": "External signals this workflow accepts. A signal with goto interrupts: it is applied at the next step boundary or while waiting, and the workflow continues at goto.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "schema": {
+            "$ref": "contract.schema.json#/$defs/objectSchema"
+          },
+          "goto": {
+            "$ref": "#/$defs/stepId"
+          }
+        }
+      }
+    },
+    "search": {
+      "description": "Search attributes written on the workflow so it can be listed without a read model. Values are bindings.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "start": {
+      "$ref": "#/$defs/stepId"
+    },
+    "steps": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/step"
+      }
+    }
+  },
+  "$defs": {
+    "stepId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "duration": {
+      "$ref": "contract.schema.json#/$defs/duration"
+    },
+    "binding": {
+      "description": "A path (input.x, params.x, vars.x, steps.<id>.output.x, steps.<id>.outcome, steps.<id>.started_at, steps.<id>.ended_at, signals.<name>.x, item.x, workflow.id, workflow.parent_id, workflow.tenant, workflow.now), a constant, or a CEL expression over the same roots.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(input|params|vars|steps|signals|item|workflow)(\\.[A-Za-z_][A-Za-z0-9_]*)+$"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "const"
+          ],
+          "properties": {
+            "const": {}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expr"
+          ],
+          "properties": {
+            "expr": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          }
+        }
+      ]
+    },
+    "bindings": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "sla": {
+      "description": "If the step has not finished after this long, the engine raises an alert keyed on the workflow and step. The step keeps running.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "after"
+      ],
+      "properties": {
+        "after": {
+          "$ref": "#/$defs/duration"
+        },
+        "alert": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.]*$"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "call",
+            "decide",
+            "set",
+            "wait",
+            "human",
+            "spawn",
+            "signal",
+            "compensate",
+            "end"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "call"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/callStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "decide"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/decideStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "set"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/setStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "wait"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/waitStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "human"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/humanStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "spawn"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/spawnStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "signal"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/signalStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "compensate"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/compensateStep"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "end"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/endStep"
+          }
+        }
+      ]
+    },
+    "callStep": {
+      "description": "Run a capability. on maps every declared outcome, plus failed (and unknown for write capabilities), to a next step.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "capability",
+        "version",
+        "input",
+        "on"
+      ],
+      "properties": {
+        "type": {
+          "const": "call"
+        },
+        "description": {
+          "type": "string"
+        },
+        "capability": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "input": {
+          "$ref": "#/$defs/bindings"
+        },
+        "config": {
+          "$ref": "#/$defs/bindings"
+        },
+        "timeout": {
+          "$ref": "#/$defs/duration"
+        },
+        "retry": {
+          "$ref": "contract.schema.json#/$defs/retry"
+        },
+        "sla": {
+          "$ref": "#/$defs/sla"
+        },
+        "gate": {
+          "description": "Only for kind ai. If output.confidence is below threshold the workflow goes to below instead of on[outcome].",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "threshold",
+            "below"
+          ],
+          "properties": {
+            "threshold": {
+              "$ref": "#/$defs/binding"
+            },
+            "below": {
+              "$ref": "#/$defs/stepId"
+            }
+          }
+        },
+        "compensate": {
+          "description": "How to undo this step's effect. Run by a later compensate step, newest first.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "capability",
+            "version",
+            "input"
+          ],
+          "properties": {
+            "capability": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "input": {
+              "$ref": "#/$defs/bindings"
+            },
+            "config": {
+              "$ref": "#/$defs/bindings"
+            }
+          }
+        },
+        "on": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/stepId"
+          }
+        }
+      }
+    },
+    "decideStep": {
+      "description": "First case whose CEL condition is true wins; otherwise else.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "cases",
+        "else"
+      ],
+      "properties": {
+        "type": {
+          "const": "decide"
+        },
+        "description": {
+          "type": "string"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "when",
+              "next"
+            ],
+            "properties": {
+              "when": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "next": {
+                "$ref": "#/$defs/stepId"
+              }
+            }
+          }
+        },
+        "else": {
+          "$ref": "#/$defs/stepId"
+        }
+      }
+    },
+    "waitStep": {
+      "description": "Wait for a declared signal (optionally collecting several), or for a duration. With timeout, on.timeout is required. steps.<id>.outcome is received, elapsed or timeout.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "on"
+      ],
+      "properties": {
+        "type": {
+          "const": "wait"
+        },
+        "description": {
+          "type": "string"
+        },
+        "signal": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "duration": {
+          "$ref": "#/$defs/binding"
+        },
+        "timeout": {
+          "$ref": "#/$defs/binding"
+        },
+        "sla": {
+          "$ref": "#/$defs/sla"
+        },
+        "on": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "received": {
+              "$ref": "#/$defs/stepId"
+            },
+            "elapsed": {
+              "$ref": "#/$defs/stepId"
+            },
+            "timeout": {
+              "$ref": "#/$defs/stepId"
+            }
+          }
+        },
+        "collect": {
+          "description": "With signal: after the first payload arrives keep collecting until max payloads or window elapsed. Output is {items: [...]}.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "window"
+          ],
+          "properties": {
+            "window": {
+              "$ref": "#/$defs/binding"
+            },
+            "max": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 2
+                },
+                {
+                  "$ref": "#/$defs/binding"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "humanStep": {
+      "description": "Create a task for a person and wait until it is resolved with one of the declared outcomes through the Temporal Update named human (see SPEC §5).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "task",
+        "input",
+        "outcomes",
+        "on"
+      ],
+      "properties": {
+        "type": {
+          "const": "human"
+        },
+        "description": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.]*$"
+        },
+        "input": {
+          "$ref": "#/$defs/bindings"
+        },
+        "outcomes": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "$ref": "contract.schema.json#/$defs/objectSchema"
+          }
+        },
+        "sla": {
+          "$ref": "#/$defs/sla"
+        },
+        "on": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/stepId"
+          }
+        }
+      }
+    },
+    "spawnStep": {
+      "description": "Start child workflows, one per element of foreach (or one if absent). wait all: continue when every child has ended; wait none: continue at once.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "definition",
+        "version",
+        "key",
+        "input",
+        "wait",
+        "next"
+      ],
+      "properties": {
+        "type": {
+          "const": "spawn"
+        },
+        "description": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "foreach": {
+          "$ref": "#/$defs/binding"
+        },
+        "key": {
+          "description": "Binding that makes each child's workflow id unique and stable, e.g. item.id. Required, also without foreach, because a step can run more than once.",
+          "$ref": "#/$defs/binding"
+        },
+        "input": {
+          "$ref": "#/$defs/bindings"
+        },
+        "wait": {
+          "enum": [
+            "all",
+            "none"
+          ]
+        },
+        "next": {
+          "$ref": "#/$defs/stepId"
+        },
+        "onChildFailed": {
+          "$ref": "#/$defs/stepId"
+        },
+        "params": {
+          "description": "Param overrides passed to every child. Children do not inherit the parent's overrides.",
+          "$ref": "#/$defs/bindings"
+        }
+      }
+    },
+    "signalStep": {
+      "description": "Send a signal to the parent, to a workflow id (optionally starting it), or to every running child of a spawn step, then continue.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "to",
+        "name",
+        "next"
+      ],
+      "properties": {
+        "type": {
+          "const": "signal"
+        },
+        "description": {
+          "type": "string"
+        },
+        "to": {
+          "oneOf": [
+            {
+              "const": "parent"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "workflow"
+              ],
+              "properties": {
+                "workflow": {
+                  "$ref": "#/$defs/binding"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "children"
+              ],
+              "properties": {
+                "children": {
+                  "$ref": "#/$defs/stepId"
+                }
+              }
+            }
+          ]
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "payload": {
+          "$ref": "#/$defs/bindings"
+        },
+        "next": {
+          "$ref": "#/$defs/stepId"
+        },
+        "start": {
+          "description": "Only with to.workflow: start that workflow with this definition and input if it is not running (signal-with-start).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "definition",
+            "version",
+            "input"
+          ],
+          "properties": {
+            "definition": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "input": {
+              "$ref": "#/$defs/bindings"
+            },
+            "params": {
+              "$ref": "#/$defs/bindings"
+            },
+            "once": {
+              "description": "true: never start a workflow id that already ran and closed (Temporal WorkflowIdReusePolicy RejectDuplicate). A running target is still signalled; a closed one is skipped without an alert. Default false: a closed target starts again.",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "compensateStep": {
+      "description": "Run the compensate of every completed call step that declares one, newest first, then continue.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "next"
+      ],
+      "properties": {
+        "type": {
+          "const": "compensate"
+        },
+        "description": {
+          "type": "string"
+        },
+        "next": {
+          "$ref": "#/$defs/stepId"
+        }
+      }
+    },
+    "endStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "status"
+      ],
+      "properties": {
+        "type": {
+          "const": "end"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "output": {
+          "$ref": "#/$defs/bindings"
+        },
+        "drain": {
+          "description": "Signals whose queued payloads must not be lost. If any has payloads queued when this end is reached, the workflow continues as new instead of ending (SPEC §5).",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        }
+      }
+    },
+    "setStep": {
+      "description": "Assign workflow variables, then continue. Each value must validate against the variable's schema.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "values",
+        "next"
+      ],
+      "properties": {
+        "type": {
+          "const": "set"
+        },
+        "description": {
+          "type": "string"
+        },
+        "values": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/binding"
+          }
+        },
+        "next": {
+          "$ref": "#/$defs/stepId"
+        }
+      }
+    }
+  }
+}

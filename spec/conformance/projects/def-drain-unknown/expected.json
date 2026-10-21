@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_DRAIN_UNKNOWN",
+      "file": "definitions/audit.v1.json",
+      "pointer": "/steps/end/drain/0"
+    }
+  ]
+}

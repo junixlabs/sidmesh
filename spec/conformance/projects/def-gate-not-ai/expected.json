@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_GATE_NOT_AI",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/fetch/gate"
+    }
+  ]
+}

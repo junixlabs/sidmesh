@@ -1,0 +1,5 @@
+{
+  "id": "shop",
+  "responsibility": "Reads orders and moves money for them.",
+  "runtime": "go"
+}

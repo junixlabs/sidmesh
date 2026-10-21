@@ -1,0 +1,14 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "PRJ_DUPLICATE_CAPABILITY",
+      "file": "nodes/shop/contracts/get_orderx.v1.json",
+      "pointer": "/capability"
+    },
+    {
+      "code": "CON_FILENAME",
+      "file": "nodes/shop/contracts/get_orderx.v1.json"
+    }
+  ]
+}

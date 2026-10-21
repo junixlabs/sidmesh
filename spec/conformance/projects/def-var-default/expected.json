@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_VAR_DEFAULT",
+      "file": "definitions/main.v1.json",
+      "pointer": "/vars/label/default"
+    }
+  ]
+}

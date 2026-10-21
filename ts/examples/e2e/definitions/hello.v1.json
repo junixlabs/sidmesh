@@ -1,0 +1,29 @@
+{
+  "id": "hello",
+  "version": 1,
+  "description": "One call on the TS queue, routed by its outcome.",
+  "input": {
+    "type": "object",
+    "properties": { "name": { "type": "string" } },
+    "required": ["name"],
+    "additionalProperties": false
+  },
+  "start": "greet",
+  "steps": {
+    "greet": {
+      "type": "call",
+      "capability": "greeter.greet",
+      "version": 1,
+      "input": { "name": "input.name" },
+      "config": { "punctuation": { "const": "!" } },
+      "on": { "greeted": "done", "refused": "refused", "failed": "failed" }
+    },
+    "done": {
+      "type": "end",
+      "status": "completed",
+      "output": { "message": "steps.greet.output.message", "runtime": "steps.greet.output.runtime" }
+    },
+    "refused": { "type": "end", "status": "failed", "output": { "reason": "steps.greet.output.reason" } },
+    "failed": { "type": "end", "status": "failed" }
+  }
+}

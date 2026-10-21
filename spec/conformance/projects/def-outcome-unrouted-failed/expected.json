@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DEF_OUTCOME_UNROUTED",
+      "file": "definitions/main.v1.json",
+      "pointer": "/steps/classify/on"
+    }
+  ]
+}

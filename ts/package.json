@@ -1,0 +1,53 @@
+{
+  "name": "@sidmesh/core",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "sidmesh": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"const fs=require('node:fs');fs.mkdirSync('dist/spec',{recursive:true});for(const f of fs.readdirSync('../spec'))if(f.endsWith('.schema.json'))fs.copyFileSync('../spec/'+f,'dist/spec/'+f)\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bufbuild/cel": "0.6.1",
+    "@bufbuild/protobuf": "2.6.2",
+    "@temporalio/client": "1.11.7",
+    "@temporalio/common": "1.11.7",
+    "@temporalio/proto": "1.11.7",
+    "@temporalio/worker": "1.11.7",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "pg": "8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/pg": "8.11.10",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./worker": {
+      "types": "./dist/runtime/worker.d.ts",
+      "default": "./dist/runtime/worker.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    }
+  }
+}

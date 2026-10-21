@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidmesh.dev/spec/v0.2/contract.schema.json",
+  "title": "SidMesh capability contract",
+  "description": "contracts/<verb>.v<version>.json inside a node directory. One file per capability version. Semantic rules that JSON Schema cannot express are listed in SPEC.md (codes CON_*).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["capability", "version", "kind", "effects", "summary", "input", "outcomes"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "capability": {
+      "description": "<nodeId>.<verb>. Must start with the id of the node that owns it.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+    },
+    "version": {
+      "description": "Incompatible changes get a new version in a new file; callers move explicitly.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "kind": {
+      "description": "action: deterministic or integration work. ai: returns a suggestion with a confidence and can sit behind a gate.",
+      "enum": ["action", "ai"]
+    },
+    "effects": {
+      "description": "none: reads or computes only. write: changes something outside the engine and must declare idempotency and lookup.",
+      "enum": ["none", "write"]
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "config": {
+      "description": "Schema of per-tenant configuration bound by the definition (thresholds, endpoints names, toggles). Never secrets.",
+      "$ref": "#/$defs/objectSchema"
+    },
+    "input": { "$ref": "#/$defs/objectSchema" },
+    "outcomes": {
+      "description": "Every way the capability can finish successfully, each with its own output schema. failed and unknown are reserved for the engine.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "output"],
+        "properties": {
+          "description": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "output": { "$ref": "#/$defs/objectSchema" }
+        }
+      }
+    },
+    "idempotency": {
+      "description": "Required when effects is write. Input paths whose values together identify one logical write.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key"],
+      "properties": {
+        "key": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/inputPath" }
+        }
+      }
+    },
+    "lookup": {
+      "description": "Required when effects is write. A capability of the same node that, given the same input, reports what an earlier attempt did. Used to resolve unknown.",
+      "$ref": "#/$defs/capabilityRef"
+    },
+    "ledger": {
+      "description": "Fields recorded in the learning ledger for every call. Keep to what the decision needs; no personal data unless the decision uses it.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(input|config|output)(\\.[A-Za-z_][A-Za-z0-9_]*)+$" },
+      "default": []
+    },
+    "defaults": {
+      "description": "Execution defaults a definition may override per step.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timeout": { "$ref": "#/$defs/duration" },
+        "retry": { "$ref": "#/$defs/retry" }
+      }
+    }
+  },
+  "$defs": {
+    "duration": { "type": "string", "pattern": "^[1-9][0-9]*(ms|s|m|h|d)$" },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxAttempts"],
+      "properties": {
+        "maxAttempts": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "initialInterval": { "$ref": "#/$defs/duration" },
+        "backoff": { "type": "number", "minimum": 1, "maximum": 10 }
+      }
+    },
+    "capabilityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability", "version"],
+      "properties": {
+        "capability": { "type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "inputPath": { "type": "string", "pattern": "^input(\\.[A-Za-z_][A-Za-z0-9_]*)+$" },
+    "objectSchema": {
+      "description": "A JSON Schema 2020-12 for an object. The strict profile in SPEC.md (rule CON_SCHEMA_STRICT) is checked by the validator, not here.",
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "const": "object" } }
+    }
+  }
+}

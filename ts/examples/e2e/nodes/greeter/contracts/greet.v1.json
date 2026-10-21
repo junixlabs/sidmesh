@@ -1,0 +1,39 @@
+{
+  "capability": "greeter.greet",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "Greet someone by name.",
+  "config": {
+    "type": "object",
+    "properties": { "punctuation": { "type": "string", "enum": ["!", "."] } },
+    "required": [],
+    "additionalProperties": false
+  },
+  "input": {
+    "type": "object",
+    "properties": { "name": { "type": "string", "minLength": 1 } },
+    "required": ["name"],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "greeted": {
+      "description": "A greeting was written.",
+      "output": {
+        "type": "object",
+        "properties": { "message": { "type": "string" }, "runtime": { "type": "string" } },
+        "required": ["message", "runtime"],
+        "additionalProperties": false
+      }
+    },
+    "refused": {
+      "description": "The name is on the refuse list.",
+      "output": {
+        "type": "object",
+        "properties": { "reason": { "type": "string" } },
+        "required": ["reason"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

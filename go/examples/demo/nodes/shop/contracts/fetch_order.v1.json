@@ -1,0 +1,9 @@
+{
+  "capability": "shop.fetch_order", "version": 1, "kind": "action", "effects": "none",
+  "summary": "Read an order's line items.",
+  "input": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"], "additionalProperties": false},
+  "outcomes": {
+    "found": {"description": "Order exists.", "output": {"type": "object", "properties": {"items": {"type": "array", "items": {"type": "object", "properties": {"sku": {"type": "string"}, "qty": {"type": "integer"}}, "required": ["sku", "qty"], "additionalProperties": false}}}, "required": ["items"], "additionalProperties": false}},
+    "missing": {"description": "No such order.", "output": {"type": "object", "properties": {}, "additionalProperties": false}}
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_AI_WRITE",
+      "file": "nodes/brain/contracts/learn.v1.json",
+      "pointer": "/effects"
+    }
+  ]
+}

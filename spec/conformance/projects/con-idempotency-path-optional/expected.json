@@ -1,0 +1,10 @@
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "CON_IDEMPOTENCY_PATH",
+      "file": "nodes/shop/contracts/poke.v1.json",
+      "pointer": "/idempotency/key/1"
+    }
+  ]
+}

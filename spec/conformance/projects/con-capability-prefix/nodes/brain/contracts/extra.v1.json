@@ -1,0 +1,30 @@
+{
+  "capability": "other.extra",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "other.extra v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "x": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "x"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "done": {
+      "description": "Done",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

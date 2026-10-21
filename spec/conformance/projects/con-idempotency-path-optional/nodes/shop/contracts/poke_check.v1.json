@@ -1,0 +1,42 @@
+{
+  "capability": "shop.poke_check",
+  "version": 1,
+  "kind": "action",
+  "effects": "none",
+  "summary": "shop.poke_check v1",
+  "input": {
+    "type": "object",
+    "properties": {
+      "x": {
+        "type": "string"
+      },
+      "note": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "x"
+    ],
+    "additionalProperties": false
+  },
+  "outcomes": {
+    "done": {
+      "description": "Poked",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "not_found": {
+      "description": "No attempt",
+      "output": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    }
+  }
+}

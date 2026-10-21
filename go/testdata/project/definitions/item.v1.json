@@ -1,0 +1,39 @@
+{
+  "id": "item", "version": 1,
+  "description": "Map a line item, place it with the vendor, wait until shipped.",
+  "input": {"type": "object", "properties": {"order_id": {"type": "string"}, "sku": {"type": "string"}}, "required": ["order_id", "sku"], "additionalProperties": false},
+  "params": {"threshold": {"schema": {"type": "number"}, "default": 0.8}},
+  "signals": {
+    "shipped": {"schema": {"type": "object", "properties": {"tracking": {"type": "string"}}, "additionalProperties": false}},
+    "cancel": {"schema": {"type": "object", "properties": {"reason": {"type": "string"}}, "additionalProperties": false}, "goto": "undo"}
+  },
+  "start": "suggest",
+  "steps": {
+    "suggest": {"type": "call", "capability": "mapper.suggest", "version": 1,
+      "input": {"sku": "input.sku"},
+      "gate": {"threshold": "params.threshold", "below": "review"},
+      "on": {"suggested": "place", "failed": "failed"}},
+    "review": {"type": "human", "task": "variant.review",
+      "input": {"sku": "input.sku", "suggestion": "steps.suggest.output.option_set"},
+      "outcomes": {
+        "approve": {"type": "object", "properties": {"option_set": {"type": "string"}}, "required": ["option_set"], "additionalProperties": false},
+        "reject": {"type": "object", "properties": {}, "additionalProperties": false}
+      },
+      "on": {"approve": "place", "reject": "rejected"}},
+    "place": {"type": "call", "capability": "vendor.place_order", "version": 1,
+      "input": {"order_id": "input.order_id", "sku": "input.sku"},
+      "compensate": {"capability": "vendor.cancel_order", "version": 1, "input": {"po_id": "steps.place.output.po_id"}},
+      "on": {"accepted": "ship", "rejected": "rejected", "failed": "failed", "unknown": "unknown"}},
+    "ship": {"type": "wait", "signal": "shipped", "timeout": {"const": "7d"},
+      "sla": {"after": "2d", "alert": "item.ship_slow"},
+      "on": {"received": "shipped", "timeout": "failed"}},
+    "shipped": {"type": "end", "status": "completed",
+      "output": {"po_id": "steps.place.output.po_id", "tracking": "steps.ship.output.tracking",
+                 "label": {"expr": "input.sku + ':' + steps.place.output.po_id"}}},
+    "undo": {"type": "compensate", "next": "cancelled"},
+    "cancelled": {"type": "end", "status": "cancelled", "output": {"reason": "signals.cancel.reason"}},
+    "rejected": {"type": "end", "status": "failed"},
+    "failed": {"type": "end", "status": "failed"},
+    "unknown": {"type": "end", "status": "failed", "output": {"why": {"const": "write outcome unknown"}}}
+  }
+}
