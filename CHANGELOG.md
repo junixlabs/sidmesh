@@ -11,6 +11,11 @@ Every release lists:
 - **Upgrade notes**: what a project must do, in order, and whether running workflows are
   affected.
 
+## Unreleased
+
+- The repository is public under the Apache License 2.0. Installing the Go module or
+  `@sidmesh/core` needs no credentials: drop `GOPRIVATE` and any git token set up for v0.3.1.
+
 ## v0.3.1 (2026-10-21)
 
 ### Runtimes

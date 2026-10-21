@@ -4,7 +4,7 @@ Build a system out of small nodes with explicit contracts. Nodes own capabilitie
 described by a JSON contract; JSON definitions wire capabilities into workflows that a single
 Go interpreter runs durably on [Temporal](https://temporal.io).
 
-**Status:** internal, pre-1.0 (spec v0.3). Used by one internal project. Every minor
+**Status:** pre-1.0 (spec v0.3). Used by one internal project. Every minor
 release may break; read the [changelog](CHANGELOG.md) before upgrading.
 
 ## Why
@@ -154,11 +154,9 @@ scaffold a node with `sidmesh new-node <id> --runtime go|ts`, write a definition
 
 ## Use it in a project
 
-The repository is private: give the machine read access (`gh auth login`, then git uses
-`gh auth git-credential`) and tell Go to fetch it directly.
+The repository is public; nothing needs credentials.
 
 ```bash
-export GOPRIVATE='github.com/junixlabs/*'
 go get github.com/junixlabs/sidmesh/go@latest
 ```
 
