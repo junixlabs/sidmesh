@@ -10,8 +10,8 @@ import (
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 func (r *run) call(id string, s project.Step) (string, error) {

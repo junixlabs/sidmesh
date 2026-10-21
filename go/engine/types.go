@@ -5,7 +5,7 @@ package engine
 import (
 	"encoding/json"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // Names registered with Temporal.

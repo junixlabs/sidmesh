@@ -206,9 +206,9 @@ describe("new-node", () => {
           "",
           "go 1.25",
           "",
-          "require gitlab.com/sidcorp-it/sidmesh/go v0.0.0",
+          "require github.com/junixlabs/sidmesh/go v0.0.0",
           "",
-          `replace gitlab.com/sidcorp-it/sidmesh/go => ${goRuntime}`,
+          `replace github.com/junixlabs/sidmesh/go => ${goRuntime}`,
           "",
         ].join("\n"),
       );

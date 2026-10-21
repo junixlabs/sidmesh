@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"strings"
 
+	sidmesh "github.com/junixlabs/sidmesh/go"
 	"github.com/santhosh-tekuri/jsonschema/v6"
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
 )
 
 // Project is a loaded project directory.

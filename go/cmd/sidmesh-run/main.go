@@ -15,9 +15,9 @@ import (
 
 	"go.temporal.io/sdk/client"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/engine"
-	"gitlab.com/sidcorp-it/sidmesh/go/pgsink"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/engine"
+	"github.com/junixlabs/sidmesh/go/pgsink"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 func main() {

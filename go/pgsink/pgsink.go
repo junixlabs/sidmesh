@@ -12,8 +12,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/engine"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/engine"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 //go:embed schema.sql

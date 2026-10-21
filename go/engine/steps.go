@@ -12,8 +12,8 @@ import (
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // HumanUpdate is the Temporal Update that resolves a human step (SPEC §5 "Human").

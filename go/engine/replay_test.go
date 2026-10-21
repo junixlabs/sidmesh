@@ -11,8 +11,8 @@ import (
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/codec"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/codec"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // replayKeys is the SIDMESH_CODEC_KEYS of the e2e run that recorded the histories (key bytes

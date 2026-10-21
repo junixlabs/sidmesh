@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.temporal.io/sdk/testsuite"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
+	sidmesh "github.com/junixlabs/sidmesh/go"
 )
 
 func shipAfter(h *harness, d time.Duration, workflowID string) {

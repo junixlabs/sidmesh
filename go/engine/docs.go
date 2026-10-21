@@ -12,8 +12,8 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"go.temporal.io/sdk/workflow"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // Registry is the content-addressed document store of SPEC §6.1 (sidmesh_documents).

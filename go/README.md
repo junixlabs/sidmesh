@@ -5,7 +5,7 @@ activity, and the API a Go node uses. Behaviour follows `../spec/SPEC.md`. Start
 [root README](../README.md) for concepts and an example; releases and upgrade notes are in
 [`../CHANGELOG.md`](../CHANGELOG.md).
 
-Module: `gitlab.com/sidcorp-it/sidmesh/go`
+Module: `github.com/junixlabs/sidmesh/go`
 
 | Package | What it is for |
 | --- | --- |

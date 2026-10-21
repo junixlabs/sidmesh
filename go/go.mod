@@ -1,4 +1,4 @@
-module gitlab.com/sidcorp-it/sidmesh/go
+module github.com/junixlabs/sidmesh/go
 
 go 1.25.4
 

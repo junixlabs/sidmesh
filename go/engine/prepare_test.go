@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 func TestPreparePinsEverythingTheWorkflowNeeds(t *testing.T) {

@@ -14,7 +14,7 @@ import (
 	"cel.dev/cel-go/cel"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // Binding roots of SPEC §5. Every root is a CEL variable of type dyn.

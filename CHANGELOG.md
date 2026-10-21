@@ -11,6 +11,27 @@ Every release lists:
 - **Upgrade notes**: what a project must do, in order, and whether running workflows are
   affected.
 
+## v0.3.1 (2026-10-21)
+
+### Runtimes
+
+- The Go module path is now `github.com/junixlabs/sidmesh/go` (was
+  `gitlab.com/sidcorp-it/sidmesh/go`, which was never published), so the module can be
+  fetched from its repository. `sidmesh new-node` scaffolds Go nodes with the new import path.
+- `@sidmesh/core` builds itself on install (`prepare`), so it can be installed from the
+  repository: `"@sidmesh/core": "github:junixlabs/sidmesh#v0.3.1&path:/ts"`.
+
+### Upgrade notes
+
+1. Go: replace `gitlab.com/sidcorp-it/sidmesh/go` with `github.com/junixlabs/sidmesh/go` in
+   every import, drop the `replace` to a local checkout, `require
+   github.com/junixlabs/sidmesh/go v0.3.1`, and run `gofmt -w .`. The repository is private:
+   set `GOPRIVATE=github.com/junixlabs/*` and give git HTTPS credentials for github.com.
+2. TS: depend on `github:junixlabs/sidmesh#v0.3.1&path:/ts` and allow its build script
+   (pnpm: `onlyBuiltDependencies: ["@sidmesh/core"]`).
+3. The module path changes again when the repository moves to its final organisation; that
+   release will say so.
+
 ## v0.3.0 (2026-10-21)
 
 ### Spec

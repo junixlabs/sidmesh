@@ -6,7 +6,7 @@ import path from "node:path";
  * sidmesh.Register, Meta and Result.
  * Kept in step with ../go/go.mod.
  */
-export const GO_RUNTIME_IMPORT = "gitlab.com/sidcorp-it/sidmesh/go";
+export const GO_RUNTIME_IMPORT = "github.com/junixlabs/sidmesh/go";
 
 const NODE_ID = /^[a-z][a-z0-9_]*$/;
 

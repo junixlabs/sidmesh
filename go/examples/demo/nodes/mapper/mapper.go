@@ -5,7 +5,7 @@ package mapper
 import (
 	"context"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
+	sidmesh "github.com/junixlabs/sidmesh/go"
 )
 
 // SuggestV1Input, SuggestV1Config and SuggestV1SuggestedOutput come from contracts_gen.go.

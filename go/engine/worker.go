@@ -11,9 +11,9 @@ import (
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/codec"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/codec"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // WorkerOptions configure the workers of one project.

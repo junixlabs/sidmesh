@@ -8,7 +8,7 @@ import (
 	"errors"
 	"sync"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
+	sidmesh "github.com/junixlabs/sidmesh/go"
 )
 
 // Input, config and output types come from contracts_gen.go (sidmesh codegen).

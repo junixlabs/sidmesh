@@ -12,8 +12,8 @@ import (
 	enumspb "go.temporal.io/api/enums/v1"
 	"go.temporal.io/sdk/client"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // StartRequest is what a caller supplies to start a workflow (SPEC §5 "Starting").

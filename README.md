@@ -181,6 +181,7 @@ implement.
 
 | Release | Spec | Go module | `@sidmesh/core` | Temporal Go SDK | Temporal TS SDK |
 | --- | --- | --- | --- | --- | --- |
+| v0.3.1 | 0.3 | `go/v0.3.1` | 0.3.1 | 1.48 | 1.11 |
 | v0.3.0 | 0.3 | `go/v0.3.0` | 0.3.0 | 1.48 | 1.11 |
 
 - **Before 1.0** every minor release may break documents or APIs; its upgrade notes say what

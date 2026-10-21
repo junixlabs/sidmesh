@@ -1,6 +1,6 @@
 {
   "name": "@sidmesh/core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -13,6 +13,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json && node -e \"const fs=require('node:fs');fs.mkdirSync('dist/spec',{recursive:true});for(const f of fs.readdirSync('../spec'))if(f.endsWith('.schema.json'))fs.copyFileSync('../spec/'+f,'dist/spec/'+f)\"",
+    "prepare": "pnpm build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },

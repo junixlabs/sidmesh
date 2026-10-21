@@ -8,8 +8,8 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"go.temporal.io/sdk/temporal"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 // CallActivity is the Go worker's sidmesh.call activity (SPEC §4, §4.1). It enforces the

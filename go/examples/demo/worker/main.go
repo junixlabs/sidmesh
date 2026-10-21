@@ -6,13 +6,13 @@ import (
 	"flag"
 	"log"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/engine"
-	"gitlab.com/sidcorp-it/sidmesh/go/pgsink"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	"github.com/junixlabs/sidmesh/go/engine"
+	"github.com/junixlabs/sidmesh/go/pgsink"
+	"github.com/junixlabs/sidmesh/go/project"
 
-	_ "gitlab.com/sidcorp-it/sidmesh/go/examples/demo/nodes/mapper"
-	_ "gitlab.com/sidcorp-it/sidmesh/go/examples/demo/nodes/shop"
-	_ "gitlab.com/sidcorp-it/sidmesh/go/examples/demo/nodes/vendor"
+	_ "github.com/junixlabs/sidmesh/go/examples/demo/nodes/mapper"
+	_ "github.com/junixlabs/sidmesh/go/examples/demo/nodes/shop"
+	_ "github.com/junixlabs/sidmesh/go/examples/demo/nodes/vendor"
 )
 
 func main() {

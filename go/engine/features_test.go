@@ -13,8 +13,8 @@ import (
 	"go.temporal.io/sdk/mocks"
 	"go.temporal.io/sdk/temporal"
 
-	sidmesh "gitlab.com/sidcorp-it/sidmesh/go"
-	"gitlab.com/sidcorp-it/sidmesh/go/project"
+	sidmesh "github.com/junixlabs/sidmesh/go"
+	"github.com/junixlabs/sidmesh/go/project"
 )
 
 func signalAt(h *harness, d time.Duration, name string, payload any) {

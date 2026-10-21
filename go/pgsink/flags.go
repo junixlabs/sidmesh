@@ -8,7 +8,7 @@ import (
 	"io"
 	"os"
 
-	"gitlab.com/sidcorp-it/sidmesh/go/engine"
+	"github.com/junixlabs/sidmesh/go/engine"
 )
 
 // EnvURL names the environment variable holding the postgres connection URL.
