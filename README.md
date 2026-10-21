@@ -152,6 +152,27 @@ To start your own project: create `sidmesh.json` (`{"name": "my-project", "spec"
 scaffold a node with `sidmesh new-node <id> --runtime go|ts`, write a definition, then
 `sidmesh validate` and `sidmesh codegen`.
 
+## Use it in a project
+
+The repository is private: give the machine read access (`gh auth login`, then git uses
+`gh auth git-credential`) and tell Go to fetch it directly.
+
+```bash
+export GOPRIVATE='github.com/junixlabs/*'
+go get github.com/junixlabs/sidmesh/go@latest
+```
+
+```json
+{ "dependencies": { "@sidmesh/core": "github:junixlabs/sidmesh#semver:>=0.3.1&path:/ts" } }
+```
+
+`@sidmesh/core` builds itself on install, so pnpm must allow it:
+`allowBuilds: { "@sidmesh/core@git+https://github.com/junixlabs/sidmesh.git": true }` in
+`pnpm-workspace.yaml`. Internal tools track the newest release: run
+`go get github.com/junixlabs/sidmesh/go@latest && pnpm update @sidmesh/core`, read the release's
+upgrade notes, then validate and test. `go.sum` and the lockfile pin what you got until the
+next update.
+
 ## Repository
 
 | Path | What it is | Read |
